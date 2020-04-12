@@ -21,7 +21,7 @@
 .projeto-btn-icone-add { background-image: url("/Images/btn-icone-add.png"); width:50px; height:100px; background-repeat: no-repeat; margin-left: auto; margin-right: auto; cursor: pointer; position: relative; top: -18px; }
 .projeto-btn-icone-add:hover { background-image: url("/Images/btn-icone-add-hover.png"); width:50px; height:100px; background-repeat: no-repeat; margin-left: auto; margin-right: auto; cursor: pointer; position: relative; top: -18px; }
 .projeto-btn-icone-add-text { color:#28a745; font-weight: bold; font-size: 18px; margin-left: auto; margin-right: auto; position: relative; top: -18px; left:40px; }
-.projeto-margin-lr-auto { margin-left: auto; margin-right: auto; }
+.projeto-margin-lr-auto { margin-left: auto; margin-right: auto; padding-bottom:60px }
 </style>
 </head>
 <body class="projeto-bg-body">
@@ -106,7 +106,7 @@
 			                    </div>
 			                    <div class="col-6">
 			                    
-			                        <a href=agendamentos/remetente-remocao/${agendamento.remetente.id} class="btn btn-danger rounded ml-3 float-right text-white font-weight-bold"> 
+			                        <a href=agendamentos/${agendamento.id}/remetente-remocao/${agendamento.remetente.id} class="btn btn-danger rounded ml-3 float-right text-white font-weight-bold"> 
 			                            <span class="float-left ml-2 pt-1 pr-1">Remover</span>
 			                        </a>       
 			
@@ -236,7 +236,7 @@
 		        
 		        <c:if test="${agendamento.remetente != null}">
 		        	
-		       		<div class="col-4 projeto-margin-lr-auto">
+		       		<div class="col-4 projeto-margin-lr-auto mb-5">
 		       		   
 			       		<div class="col-12 mt-5 projeto-btn-icone-add-text">Adicionar Mensagem De:</div>
 			       		

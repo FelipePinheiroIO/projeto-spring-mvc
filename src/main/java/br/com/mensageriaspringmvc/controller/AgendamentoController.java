@@ -1,25 +1,22 @@
 package br.com.mensageriaspringmvc.controller;
 
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.RestTemplate;
-
 import br.com.mensageriaspringmvc.model.AgendamentoEdicaoModel;
 import br.com.mensageriaspringmvc.model.AgendamentoNovoModel;
+import br.com.mensageriaspringmvc.services.AgendamentoService;
 
 
 @Controller
 public class AgendamentoController {
 
-	private RestTemplate rest = new RestTemplate();
-	private String uri = "http://localhost:8089/v1/api/";
+	@Autowired
+	private AgendamentoService agendamentoService;
 	
 	@RequestMapping(value="/agendamento-novo", method= RequestMethod.GET)
 	public String agendamentoNovo() {        
@@ -29,10 +26,7 @@ public class AgendamentoController {
 	@RequestMapping(value="/agendamento-novo", method= RequestMethod.POST)
 	public String agendamentoNovoSubmit(AgendamentoNovoModel agendamentoNovoModel) {
 
-		String endPoint = uri + "agendamentos";
-
-		HttpEntity<AgendamentoNovoModel> request = new HttpEntity<>(agendamentoNovoModel);
-		ResponseEntity<String> result = rest.postForEntity(endPoint, request, String.class);
+		var result= agendamentoService.adicionar(agendamentoNovoModel);
 		
 		if(result.getStatusCodeValue() == 200)
 			return "redirect:/agendamentos";
@@ -43,10 +37,7 @@ public class AgendamentoController {
 	@RequestMapping(value="/agendamentos", method= RequestMethod.GET)
 	public String agendamentos(Model model) {   
 		
-		String endPoint = uri + "agendamentos";
-		
-		ResponseEntity<Object[]> response =  rest.getForEntity(endPoint, Object[].class);
-		
+		var response= agendamentoService.obterTodos();	
 		if(response.getStatusCodeValue() == 200)
 		{
 			if(response.getBody().length > 0)
@@ -61,10 +52,7 @@ public class AgendamentoController {
 	@RequestMapping(value="/", method= RequestMethod.GET)
 	public String agendamentosRaiz(Model model) {   
 		
-		String endPoint = uri + "agendamentos";
-		
-		ResponseEntity<Object[]> response =  rest.getForEntity(endPoint, Object[].class);
-		
+		var response= agendamentoService.obterTodos();		
 		if(response.getStatusCodeValue() == 200)
 		{
 			if(response.getBody().length > 0)
@@ -79,11 +67,8 @@ public class AgendamentoController {
 	
 	@RequestMapping(value="/agendamento-edicao/{id}", method= RequestMethod.GET)
 	public String agendamentoEdicao(Model model, @PathVariable Integer id) {
-
-		String endPoint = uri + "agendamentos/" + id;
 		
-		ResponseEntity<Object> response = rest.getForEntity(endPoint, Object.class);
-
+		var response= agendamentoService.obterUm(id);
 		if(response.getStatusCodeValue() == 200)
 		{
 			model.addAttribute("agendamento", response.getBody());      	
@@ -94,13 +79,8 @@ public class AgendamentoController {
 	
 	@RequestMapping(value="/agendamento-edicao/{id}", method= RequestMethod.POST)
 	public String agendamentoEdicaoSubmit(@PathVariable Integer id, AgendamentoEdicaoModel agendamentoEdicaoModel) {
-		
-		String endPoint = uri + "agendamentos/" + id;
-		agendamentoEdicaoModel.setId(id);
-
-		HttpEntity<AgendamentoEdicaoModel> request = new HttpEntity<>(agendamentoEdicaoModel);
-		ResponseEntity<Object> result = rest.exchange(endPoint, HttpMethod.PUT, request, Object.class);
-		
+			
+		var result= agendamentoService.editar(id, agendamentoEdicaoModel);
 		if(result.getStatusCodeValue() == 200)
 			return "redirect:/agendamentos";
 		else
@@ -110,11 +90,7 @@ public class AgendamentoController {
 	@RequestMapping(value="/agendamento-remocao/{id}", method= RequestMethod.GET)
 	public String agendamentoDeleteSubmit(@PathVariable Integer id) {
 		
-		String endPoint = uri + "agendamentos/" + id;
-
-		HttpEntity<Object> request = new HttpEntity<>(Object.class);
-		ResponseEntity<Object> result = rest.exchange(endPoint, HttpMethod.DELETE, request, Object.class);
-		
+		var result= agendamentoService.remover(id);
 		if(result.getStatusCodeValue() == 200)
 			return "redirect:/agendamentos";
 		else
